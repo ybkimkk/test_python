@@ -10,7 +10,6 @@ def app_start(d):
     d.shell('am start -n com.whatsapp/.Main')
     while True:
         current_app = d.app_current()
-        print(current_app)
         if current_app.get('package') == "com.whatsapp":
             print("WhatsApp 已启动完成")
             break
@@ -40,7 +39,6 @@ def past_search_input(d):
 def restart_network(d):
     screen_size = d.window_size()
     width, height = screen_size
-    print(width, height)
     start_x = width - 100
     end_y = height // 8
     d.swipe(start_x, 0, start_x, end_y, duration=0.2)
