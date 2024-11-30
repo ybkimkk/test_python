@@ -1,5 +1,4 @@
 import time
-import re
 from time import sleep
 
 import uiautomator2 as u2
@@ -36,20 +35,14 @@ def clicksearch(d):
 
 def clearinput(d):
     while not d(resourceId="com.whatsapp:id/search_input").exists:
-        print("等待输入框...")  # 如果元素不存在则等待
+        print("等待搜索框...")  # 如果元素不存在则等待
         time.sleep(1)
-
-    print("清空内容")
     d(resourceId="com.whatsapp:id/search_input").clear_text()
 
 
 # 循环等待 "search_input" 元素再次可用
 def past(d):
-    while not d(resourceId="com.whatsapp:id/search_input").exists:
-        print("等待输入框可用...")  # 如果元素不存在则等待
-        time.sleep(1)
-
-    print("粘贴")
+    sleep(1)
     d(resourceId="com.whatsapp:id/search_input").set_text("中午吃什么")
 
 
