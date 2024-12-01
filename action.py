@@ -19,7 +19,7 @@ def app_start(d):
 
 def click_search_icon(d):
     while not d(resourceId="com.whatsapp:id/menuitem_search").exists:
-        print("等待搜索框...")  # 如果元素不存在则等待
+        print("等待搜索图标...")  # 如果元素不存在则等待
         sleep(1)
     d(resourceId="com.whatsapp:id/menuitem_search").click()
 
@@ -32,9 +32,9 @@ def clear_search_input(d):
 
 
 # 循环等待 "search_input" 元素再次可用
-def past_search_input(d):
+def past_search_input(d,user):
     sleep(1)
-    d(resourceId="com.whatsapp:id/search_input").set_text("中午吃什么")
+    d(resourceId="com.whatsapp:id/search_input").set_text(user)
 
 def restart_network(d):
     screen_size = d.window_size()

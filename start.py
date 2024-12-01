@@ -1,16 +1,33 @@
-import action
+import sys
 
 import uiautomator2 as u2
+import util.dataUtils as du
+import action
+import pandas as pd
+import warnings
 
-d = u2.connect()  # connect to device
-# d = u2.connect('device_ip')  # 如果是 Wi-Fi 连接
+# 禁用所有警告
+warnings.filterwarnings('ignore')
 
-
-action.mobile_root(d)
+# wifi 连接
+try:
+    d = u2.connect(du.get_device_ip() + ':5555')
+except Exception as e:
+    print('wifi 连接失败请重新激活')
+    sys.exit(1)
+# 清理后台应用
 action.clear_system_app(d)
-action.restart_network(d)
+# 启动 app
 action.app_start(d)
-action.click_search_icon(d)
-action.clear_search_input(d)
-action.past_search_input(d)
-print(d.dump_hierarchy())
+
+file_path = 'data/user.xlsx'
+df = pd.read_excel(file_path)
+for index, row in df.iterrows():
+    print(f"第{index+1}条数据,用户名:[{row['用户名']}],开始执行")
+    if index == 0:
+        # 点击搜索
+        action.click_search_icon(d)
+    # 清空输入框
+    action.clear_search_input(d)
+    # 粘贴
+    action.past_search_input(d, row['用户名'])
