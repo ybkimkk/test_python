@@ -10,3 +10,4 @@ if os_name =="Windows":
 elif os_name == "Darwin":
     adb_path = os.path.join(project_root, "platform-tools-mac", "adb")
 
+file_path = 'data/user.xlsx'
