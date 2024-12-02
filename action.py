@@ -39,8 +39,17 @@ def past_search_input(d, user):
     d(resourceId="com.whatsapp:id/search_input").set_text(user)
 
 
-# def restart_network(d):
-#     d(resourceId="com.whatsapp:id/contact_row_container").
+def restart_network(d):
+    screen_size = d.window_size()
+    width, height = screen_size
+    start_x = width - 100
+    end_y = height // 8
+    d.swipe(start_x, 0, start_x, end_y, duration=0.2)
+    d()
+    sleep(1)
+    d.press("home")
+    sleep(1)
+
 
 
 def click_user(d):
