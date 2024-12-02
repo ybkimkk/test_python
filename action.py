@@ -1,9 +1,11 @@
 from time import sleep
 
+from config.config import adb_path
+
 
 def mobile_root(d):
-    d.shell('adb root')
-    d.shell('adb shell pm grant com.android.shell android.permission.INJECT_EVENTS')
+    d.shell(adb_path + ' root')
+    d.shell(adb_path + ' shell pm grant com.android.shell android.permission.INJECT_EVENTS')
 
 
 def app_start(d):
@@ -32,19 +34,25 @@ def clear_search_input(d):
 
 
 # 循环等待 "search_input" 元素再次可用
-def past_search_input(d,user):
+def past_search_input(d, user):
     sleep(1)
     d(resourceId="com.whatsapp:id/search_input").set_text(user)
 
-def restart_network(d):
-    screen_size = d.window_size()
-    width, height = screen_size
-    start_x = width - 100
-    end_y = height // 8
-    d.swipe(start_x, 0, start_x, end_y, duration=0.2)
+
+# def restart_network(d):
+#     d(resourceId="com.whatsapp:id/contact_row_container").
+
+
+def click_user(d):
+    d.press("home")
+    sleep(1)
+    d.press("recent")
+    sleep(1)
+    d(resourceId="com.miui.home:id/clearAnimView").click()
     sleep(1)
     d.press("home")
     sleep(1)
+
 
 def clear_system_app(d):
     d.press("home")

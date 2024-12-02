@@ -8,7 +8,7 @@ import warnings
 
 # 禁用所有警告
 warnings.filterwarnings('ignore')
-
+print(du.get_device_ip())
 # wifi 连接
 try:
     d = u2.connect(du.get_device_ip() + ':5555')
