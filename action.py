@@ -66,14 +66,21 @@ def clear_system_app(d):
     d.press("home")
     sleep(1)
 
-def click_user(d,user):
+
+def click_user(d, user):
     elements = d(resourceId="com.whatsapp:id/conversations_row_contact_name")
     for element in elements:
-        if user ==element.get_text():
-            element.click()
-
+        if element.exists:
+            if user == element.get_text():
+                element.click()
+                break
+    sleep(2)
 
 def past_message_input(d):
-    d(resourceId="com.whatsapp:id/entry").clear_text()
+    message_input = d(resourceId="com.whatsapp:id/entry")
     sleep(2)
-    d(resourceId="com.whatsapp:id/entry").send_keys("aaaaaaaaaa?")
+    message_input.click()
+    sleep(2)
+    message_input.clear_text()
+    sleep(2)
+    message_input.set_text("aaaaaaaaaa?")

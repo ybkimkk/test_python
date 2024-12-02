@@ -1,4 +1,5 @@
 import sys
+from time import sleep
 
 import uiautomator2 as u2
 import util.dataUtils as du
@@ -16,10 +17,11 @@ try:
 except Exception as e:
     print('wifi 连接失败请重新激活')
     sys.exit(1)
-# # 清理后台应用
-# action.clear_system_app(d)
+
+#清理后台应用
+action.clear_system_app(d)
 # # 启动 app
-# action.app_start(d)
+action.app_start(d)
 
 df = pd.read_excel(file_path)
 for index, row in df.iterrows():
