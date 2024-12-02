@@ -1,5 +1,7 @@
 from time import sleep
 
+from conda_env.cli.main_update import description
+
 from config.config import adb_path
 
 
@@ -45,8 +47,11 @@ def restart_network(d):
     start_x = width - 100
     end_y = height // 8
     d.swipe(start_x, 0, start_x, end_y, duration=0.2)
-    d()
-    sleep(1)
+    sleep(2)
+    d(description='飞行模式,关闭').click()
+    sleep(2)
+    d(description='飞行模式,开启').click()
+    sleep(3)
     d.press("home")
     sleep(1)
 
