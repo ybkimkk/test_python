@@ -31,7 +31,7 @@ for i in range(user_list.nrows):
         action.click_user(d, user)
         for message in dataUtils.get_message():
             # 输入信息
-            action.past_message_input(d, message)
+            action.past_message_input(d, dataUtils.simulate_typo(message, 0.2))
             # 发送
             action.send_message(d)
         # 返回
