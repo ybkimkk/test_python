@@ -84,3 +84,14 @@ def past_message_input(d):
     message_input.clear_text()
     sleep(2)
     message_input.set_text("aaaaaaaaaa?")
+
+
+def send_message(d):
+    sleep(2)
+    d(resourceId="com.whatsapp:id/send").click()
+
+
+def back_to_list(d):
+    d.press("back")
+    sleep(2)
+    d.press("back")
