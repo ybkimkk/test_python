@@ -1,5 +1,6 @@
-import uuid
 import platform
+import uuid
+
 
 def get_machine_code():
     try:

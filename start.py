@@ -3,6 +3,9 @@ import uiautomator2 as u2
 import action
 import util.dataUtils as dataUtils
 
+if not dataUtils.check_device():
+    print("该设备已到期")
+
 # wifi 连接
 try:
     print("尝试WIFI链接")
@@ -29,11 +32,19 @@ for i in range(user_list.nrows):
         action.past_search_input(d, user)
         # 点击用户
         action.click_user(d, user)
-        for message in dataUtils.get_message():
-            # 输入信息
-            action.past_message_input(d, dataUtils.simulate_typo(message, 0.2))
-            # 发送
-            action.send_message(d)
+        message_list =   dataUtils.get_message()
+        print(message_list)
+        for message in message_list:
+            if message == 'gif':
+                # 点击emoji icon
+                action.click_emoji_icon(d)
+                # 点击emoji
+                action.click_emoji(d)
+            else:
+                # 输入信息
+                action.past_message_input(d, dataUtils.simulate_typo(message, 0.2))
+                # 发送
+                action.send_message(d)
         # 返回
         action.back_to_list(d)
     except Exception as e:

@@ -6,6 +6,10 @@ import action
 import util.dataUtils as dataUtils
 from config.config import adb_path
 
+
+if not dataUtils.check_device():
+    print("该设备已到期")
+
 # 初始化服务
 os.system(adb_path + ' kill-server')
 os.system(adb_path + ' start-server')

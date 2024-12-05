@@ -1,12 +1,15 @@
+import http.client
+import json
+
+import util.deviceUtils as deviceUtils
+import random
 import re
 import time
-import random
 
 import xlrd
 
-from config.config import user_path
-
 from config.config import message_path
+from config.config import user_path
 
 
 def save_device_ip(ip):
@@ -69,16 +72,38 @@ def simulate_typo(text, error_rate=0.1):
     for i in range(length):
         # 决定是否插入错误
         if random.random() < error_rate:
-            error_type = random.choice(["swap", "delete","insert"])
+            error_type = random.choice(["swap", "delete", "insert"])
 
             if error_type == "swap" and i < length - 1:  # 字符交换
                 # 随机交换当前字符和下一个字符
                 text[i], text[i + 1] = text[i + 1], text[i]
             elif error_type == "delete":  # 删除字符
                 text[i] = ""  # 删除当前字符
-            elif error_type == "insert":  #  插入字符
+            elif error_type == "insert":  # 插入字符
                 random_char = random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()")
                 text.insert(i, random_char)
                 i += 1
 
     return "".join(text)
+
+
+def check_device():
+    conn = http.client.HTTPConnection("localhost", 80)
+    # 请求头
+    headers = {
+        "Content-Type": "application/json",  # 指定内容类型为 JSON
+    }
+    # 请求体（参数）
+    payload = {
+        "deviceId": deviceUtils.get_machine_code()
+    }
+    conn.request("POST", "/api/checkDevice", body=json.dumps(payload), headers=headers)
+    response = conn.getresponse()
+
+    if response.status == 200:
+        response_data = json.loads(response.read().decode())
+        return response_data.get('check')
+    else:
+        return False
+
+    conn.close()

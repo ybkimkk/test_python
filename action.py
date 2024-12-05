@@ -1,5 +1,5 @@
+import random
 from time import sleep
-
 
 from config.config import adb_path
 
@@ -72,12 +72,13 @@ def click_user(d, user):
     elements = d(resourceId="com.whatsapp:id/conversations_row_contact_name")
     for element in elements:
         if element.exists:
-            if user == element.get_text():
+            if user in element.get_text():
                 element.click()
                 break
     dataUtils.random_sleep()
 
-def past_message_input(d,message):
+
+def past_message_input(d, message):
     message_input = d(resourceId="com.whatsapp:id/entry")
     dataUtils.random_sleep()
     message_input.click()
@@ -96,3 +97,25 @@ def back_to_list(d):
     d.press("back")
     dataUtils.random_sleep()
     d.press("back")
+
+
+def click_emoji_icon(d):
+    dataUtils.random_sleep()
+    d(resourceId="com.whatsapp:id/emoji_picker_btn").click()
+    dataUtils.random_sleep()
+    d(resourceId="com.whatsapp:id/gifs").click()
+    dataUtils.random_sleep()
+    d(resourceId="com.whatsapp:id/video_preview_container").click()
+
+
+def click_emoji(d):
+    try:
+        gif = d(resourceId="com.whatsapp:id/search_result_view")
+        gif_area = gif.bounds()
+        screen_size = d.window_size()
+        width, height = screen_size
+        d.swipe(500, height - 100, 500, gif_area[1])
+        gif.child(index=random.randint(1, 5)).click()
+    except Exception as e:
+        print(e)
+        click_emoji(d)
