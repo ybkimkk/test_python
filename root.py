@@ -4,7 +4,7 @@ import uiautomator2 as u2
 
 import action
 import util.dataUtils as dataUtils
-from config.config import adb_path
+from util.adbUtils import adb_path
 
 
 if not dataUtils.check_device():

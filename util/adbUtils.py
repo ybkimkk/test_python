@@ -5,7 +5,6 @@ import sys
 
 os_name = platform.system()
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-# 如果是打包后的程序，使用 sys._MEIPASS 来访问临时目录
 if getattr(sys, 'frozen', False):
     project_root = os.path.dirname(sys.executable)
 

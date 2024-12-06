@@ -1,9 +1,13 @@
 import random
+import re
 from time import sleep
 
-from config.config import adb_path
+from util import configUtils
+from util.adbUtils import adb_path
 
 import util.dataUtils as dataUtils
+
+config = configUtils.config
 
 
 def mobile_root(d):
@@ -15,7 +19,7 @@ def app_start(d):
     d.shell('am start -n com.whatsapp/.Main')
     while True:
         current_app = d.app_current()
-        if current_app.get('package') == "com.whatsapp":
+        if current_app.get('package') == config['package']:
             print("WhatsApp 已启动完成")
             break
         print("等待 WhatsApp 启动...")
@@ -23,23 +27,23 @@ def app_start(d):
 
 
 def click_search_icon(d):
-    while not d(resourceId="com.whatsapp:id/menuitem_search").exists:
+    while not d(resourceId=config['searchIcon']).exists:
         print("等待搜索图标...")  # 如果元素不存在则等待
         dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/menuitem_search").click()
+    d(resourceId=config['searchIcon']).click()
 
 
 def clear_search_input(d):
-    while not d(resourceId="com.whatsapp:id/search_input").exists:
+    while not d(resourceId=config['searchInput']).exists:
         print("等待搜索框...")  # 如果元素不存在则等待
         dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/search_input").clear_text()
+    d(resourceId=config['searchInput']).clear_text()
 
 
 # 循环等待 "search_input" 元素再次可用
 def past_search_input(d, user):
     dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/search_input").set_text(user)
+    input_msg(d(resourceId=config['searchInput']), user)
 
 
 def restart_network(d):
@@ -69,28 +73,26 @@ def clear_system_app(d):
 
 
 def click_user(d, user):
-    elements = d(resourceId="com.whatsapp:id/conversations_row_contact_name")
-    for element in elements:
-        if element.exists:
-            if user in element.get_text():
-                element.click()
-                break
+    dataUtils.random_sleep()
+    search_list = d(resourceId=config['searchList'])
+    matches = search_list.child(index=1)
+    matches.click()
     dataUtils.random_sleep()
 
 
 def past_message_input(d, message):
-    message_input = d(resourceId="com.whatsapp:id/entry")
+    message_input = d(resourceId=config['messageInput'])
     dataUtils.random_sleep()
     message_input.click()
     dataUtils.random_sleep()
     message_input.clear_text()
     dataUtils.random_sleep()
-    message_input.set_text(message)
+    input_msg(message_input, message)
 
 
 def send_message(d):
     dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/send").click()
+    d(resourceId=config['messageSend']).click()
 
 
 def back_to_list(d):
@@ -101,16 +103,14 @@ def back_to_list(d):
 
 def click_emoji_icon(d):
     dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/emoji_picker_btn").click()
+    d(resourceId=config['emojiIcon']).click()
     dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/gifs").click()
-    dataUtils.random_sleep()
-    d(resourceId="com.whatsapp:id/video_preview_container").click()
+    d(resourceId=config['gifButton']).click()
 
 
 def click_emoji(d):
     try:
-        gif = d(resourceId="com.whatsapp:id/search_result_view")
+        gif = d(resourceId=config['gifArea'])
         gif_area = gif.bounds()
         screen_size = d.window_size()
         width, height = screen_size
@@ -119,3 +119,17 @@ def click_emoji(d):
     except Exception as e:
         print(e)
         click_emoji(d)
+
+
+def simulate_typo_voice(d):
+    err_rate = float(config['errVoiceRate'])
+    if random.random() < err_rate:
+        d(resourceId=config['voiceButton']).long_click(random.randint(2, 3))
+
+
+def input_msg(d, msg):
+    result = re.findall(r'.', msg)
+    m = ""
+    for char in result:
+        m = m + char
+        d.send_keys(m)

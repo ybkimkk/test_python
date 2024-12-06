@@ -8,9 +8,11 @@ import time
 
 import xlrd
 
-from config.config import message_path
-from config.config import user_path
+from util import configUtils
+from util.adbUtils import message_path
+from util.adbUtils import user_path
 
+config =  configUtils.config
 
 def save_device_ip(ip):
     with open('data/device_ip.txt', 'w') as f:
@@ -32,7 +34,7 @@ def extract_ip(output):
 
 
 def random_sleep():
-    time.sleep(random.randint(2, 5))
+    time.sleep(random.randint(2, int(config['sleepMax'])))
 
 
 def get_user_list():
@@ -61,17 +63,15 @@ def get_message():
 
     # 打印选中的数字和对应的话术
     return selected_phrases
-    # for phrase in selected_phrases:
-    #     print(phrase)
 
 
-def simulate_typo(text, error_rate=0.1):
+def simulate_typo(text):
     text = list(text)  # 将字符串转为字符列表，便于修改
     length = len(text)
 
     for i in range(length):
         # 决定是否插入错误
-        if random.random() < error_rate:
+        if random.random() < float(config['errMsgRate']):
             error_type = random.choice(["swap", "delete", "insert"])
 
             if error_type == "swap" and i < length - 1:  # 字符交换
@@ -83,28 +83,32 @@ def simulate_typo(text, error_rate=0.1):
                 random_char = random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()")
                 text.insert(i, random_char)
                 i += 1
-
     return "".join(text)
 
 
 def check_device():
     conn = http.client.HTTPConnection("localhost", 80)
-    # 请求头
-    headers = {
-        "Content-Type": "application/json",  # 指定内容类型为 JSON
-    }
-    # 请求体（参数）
-    payload = {
-        "deviceId": deviceUtils.get_machine_code()
-    }
-    conn.request("POST", "/api/checkDevice", body=json.dumps(payload), headers=headers)
-    response = conn.getresponse()
-    if response.status == 200:
-        response_data = json.loads(response.read().decode())
-        print(response_data.get('msg'))
-        return response_data.get('check')
-    else:
-        print("服务器异常,请联系管理员")
-        return False
+    result = False
+    try:
+        # 请求头
+        headers = {
+            "Content-Type": "application/json",  # 指定内容类型为 JSON
+        }
+        # 请求体（参数）
+        payload = {
+            "deviceId": deviceUtils.get_machine_code()
+        }
+        conn.request("POST", "/api/checkDevice", body=json.dumps(payload), headers=headers)
+        response = conn.getresponse()
+        if response.status == 200:
+            response_data = json.loads(response.read().decode())
+            print(response_data.get('msg'))
+            result =  response_data.get('check')
+        else:
+            print("服务器异常,请联系管理员")
+            result = False
+    except Exception as e:
+        print(e)
 
     conn.close()
+    return result

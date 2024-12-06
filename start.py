@@ -21,7 +21,7 @@ else:
     # 启动 app
     action.app_start(d)
     user_list = dataUtils.get_user_list()
-    for i in range(user_list.nrows):
+    for i in range(user_list.nrows - 1):
         try:
             action.click_search_icon(d)
             user = user_list.row(i + 1)[0].value
@@ -33,7 +33,7 @@ else:
             # 点击用户
             action.click_user(d, user)
             message_list = dataUtils.get_message()
-            print(message_list)
+            action.simulate_typo_voice(d)
             for message in message_list:
                 if message == 'gif':
                     # 点击emoji icon
@@ -42,7 +42,7 @@ else:
                     action.click_emoji(d)
                 else:
                     # 输入信息
-                    action.past_message_input(d, dataUtils.simulate_typo(message, 0.2))
+                    action.past_message_input(d, dataUtils.simulate_typo(message))
                     # 发送
                     action.send_message(d)
             # 返回

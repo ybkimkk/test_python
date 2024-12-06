@@ -1,0 +1,3 @@
+err_msg_rate=0.2
+err_voice_rate=0.2
+sleep_max=5
