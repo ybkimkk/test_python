@@ -99,11 +99,12 @@ def check_device():
     }
     conn.request("POST", "/api/checkDevice", body=json.dumps(payload), headers=headers)
     response = conn.getresponse()
-
     if response.status == 200:
         response_data = json.loads(response.read().decode())
+        print(response_data.get('msg'))
         return response_data.get('check')
     else:
+        print("服务器异常,请联系管理员")
         return False
 
     conn.close()
