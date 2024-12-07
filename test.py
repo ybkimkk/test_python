@@ -1,17 +1,23 @@
-import random
+from util import dataUtils
 
-import uiautomator2 as u2
-
-import action
-from util import dataUtils, configUtils
-from util.configUtils import config
-
-d = u2.connect()
-
+# d = u2.connect()
+# d.press('home')
 
 # d(resourceId = 'com.whatsapp:id/voice_note_btn').long_click(20)
 # audio_path = '/autoGhostData/Mixdown.wav'
 
 
-#
-action.past_search_input(d, "asd?")
+# work_space =  d(className = 'android.widget.RelativeLayout')
+# for app in work_space:
+#     if 'WA' in app.info['contentDescription'] or  'WhatsApp' in app.info['contentDescription']:
+#         app.click()
+#         sleep(10)
+
+# print(dataUtils.get_device_ip())
+
+
+# dataUtils.save_device_ip('111')
+# dataUtils.clear_ip()
+
+current_ip = dataUtils.get_device_ips()
+print(current_ip)

@@ -1,28 +1,67 @@
 import http.client
 import json
-
-import util.deviceUtils as deviceUtils
+import os
 import random
 import re
 import time
 
 import xlrd
+from openpyxl import Workbook
+from openpyxl.reader.excel import load_workbook
 
+import util.deviceUtils as deviceUtils
 from util import configUtils
+from util.adbUtils import device_ip_path
 from util.adbUtils import message_path
 from util.adbUtils import user_path
 
-config =  configUtils.config
+config = configUtils.config
+
 
 def save_device_ip(ip):
-    with open('data/device_ip.txt', 'w') as f:
-        f.write(f"{ip}")
-    print('设置成功,请断开数据线')
+    # 文件路径
+    file_path = 'data/device_ip.xlsx'
+
+    # 检查文件是否存在
+    if os.path.exists(file_path):
+        # 如果文件存在，加载现有的工作簿
+        wb = load_workbook(file_path)
+        ws = wb.active  # 获取默认工作表
+    else:
+        wb = Workbook()
+        ws = wb.active
+
+    ip_found = False
+    for row in ws.iter_rows(min_row=0):
+        if row[0].value == ip:
+            ip_found = True
+            break
+
+    if not ip_found:
+        ws.append([ip])
+
+    # 保存文件
+    wb.save(file_path)
 
 
-def get_device_ip():
-    with open('data/device_ip.txt', 'r') as f:
-        return f.read()
+def get_device_ips():
+    ip = xlrd.open_workbook(device_ip_path)
+    ip_sheets = ip.sheets()[0]
+    ip_list = []
+    for row_idx in range(ip_sheets.nrows - 1, -1, -1):
+        ip_list.append(ip_sheets.cell_value(row_idx, 0))
+    return ip_list
+
+
+def clear_ip():
+    file_path = 'data/device_ip.xlsx'
+    wb = load_workbook(file_path)
+    ws = wb.active
+
+    for row in ws.iter_rows():
+        for cell in row:
+            cell.value = None
+    wb.save(file_path)
 
 
 def extract_ip(output):
@@ -103,12 +142,13 @@ def check_device():
         if response.status == 200:
             response_data = json.loads(response.read().decode())
             print(response_data.get('msg'))
-            result =  response_data.get('check')
+            result = response_data.get('check')
+            if not result:
+                print("该设备已到期")
         else:
             print("服务器异常,请联系管理员")
             result = False
     except Exception as e:
         print(e)
-
     conn.close()
     return result

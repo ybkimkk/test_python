@@ -12,3 +12,12 @@ def get_machine_code():
         return unique_code
     except Exception as e:
         return f"Error: {e}"
+
+
+def check_usb(ips):
+    device = ""
+    for ip in ips:
+        parts = ip.split('.')
+        if len(parts) != 4:
+            device = ip
+    return device

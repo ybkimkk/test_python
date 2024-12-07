@@ -2,10 +2,9 @@ import random
 import re
 from time import sleep
 
+import util.dataUtils as dataUtils
 from util import configUtils
 from util.adbUtils import adb_path
-
-import util.dataUtils as dataUtils
 
 config = configUtils.config
 
@@ -13,6 +12,7 @@ config = configUtils.config
 def mobile_root(d):
     d.shell(adb_path + ' root')
     d.shell(adb_path + ' shell pm grant com.android.shell android.permission.INJECT_EVENTS')
+    d.shell(adb_path + ' shell settings put global airplane_mode_radios cell,bluetooth,nfc')
 
 
 def app_start(d):
@@ -25,17 +25,19 @@ def app_start(d):
         print("等待 WhatsApp 启动...")
         sleep(2)
 
+def click_new_chat(d):
+    while not d(resourceId=config['newChat']).exists:
+        dataUtils.random_sleep()
+    d(resourceId=config['newChat']).click()
 
 def click_search_icon(d):
     while not d(resourceId=config['searchIcon']).exists:
-        print("等待搜索图标...")  # 如果元素不存在则等待
         dataUtils.random_sleep()
     d(resourceId=config['searchIcon']).click()
 
 
 def clear_search_input(d):
     while not d(resourceId=config['searchInput']).exists:
-        print("等待搜索框...")  # 如果元素不存在则等待
         dataUtils.random_sleep()
     d(resourceId=config['searchInput']).clear_text()
 
@@ -59,7 +61,6 @@ def restart_network(d):
     dataUtils.random_sleep()
     d.press("home")
     dataUtils.random_sleep()
-
 
 def clear_system_app(d):
     d.press("home")

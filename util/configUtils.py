@@ -14,6 +14,8 @@ read = load_config('config/config.txt')
 config = {
     # app包
     "package": "com.whatsapp",
+    # 新聊天
+    "newChat": "com.whatsapp:id/fab",
     # 搜索图标
     "searchIcon": "com.whatsapp:id/menuitem_search",
     # 搜索输入框
