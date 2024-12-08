@@ -6,8 +6,8 @@ import uiautomator2 as u2
 import action
 import util.dataUtils as dataUtils
 
-if not dataUtils.check_device():
-    sys.exit(0)
+# if not dataUtils.check_device():
+#     sys.exit(0)
 
 
 def start(current_ip):
@@ -71,6 +71,7 @@ for ip in current_ips:
     t = threading.Thread(target=start, args=(ip,))
     threads.append(t)
     t.start()
+
 for t in threads:
     t.join()
 # dataUtils.clear_ip()

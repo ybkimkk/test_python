@@ -1,18 +1,18 @@
 import random
 import re
-from time import sleep
+import time
 
 import util.dataUtils as dataUtils
-from util import configUtils
-from util.adbUtils import adb_path
+import util.configUtils as configUtils
+import util.adbUtils as adbUtils
 
 config = configUtils.config
 
 
 def mobile_root(d):
-    d.shell(adb_path + ' root')
-    d.shell(adb_path + ' shell pm grant com.android.shell android.permission.INJECT_EVENTS')
-    d.shell(adb_path + ' shell settings put global airplane_mode_radios cell,bluetooth,nfc')
+    d.shell(adbUtils.adb_path + ' root')
+    d.shell(adbUtils.adb_path + ' shell pm grant com.android.shell android.permission.INJECT_EVENTS')
+    d.shell(adbUtils.adb_path + ' shell settings put global airplane_mode_radios cell,bluetooth,nfc')
 
 
 def app_start(d):
@@ -23,7 +23,7 @@ def app_start(d):
             print("WhatsApp 已启动完成")
             break
         print("等待 WhatsApp 启动...")
-        sleep(2)
+        time.sleep(2)
 
 def click_new_chat(d):
     while not d(resourceId=config['newChat']).exists:
@@ -64,13 +64,13 @@ def restart_network(d):
 
 def clear_system_app(d):
     d.press("home")
-    sleep(2)
+    time.sleep(2)
     d.press("recent")
-    sleep(2)
+    time.sleep(2)
     d(resourceId="com.miui.home:id/clearAnimView").click()
-    sleep(2)
+    time.sleep(2)
     d.press("home")
-    sleep(2)
+    time.sleep(2)
 
 
 def click_user(d, user):

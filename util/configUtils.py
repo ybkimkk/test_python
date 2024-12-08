@@ -12,6 +12,11 @@ def load_config(file_path):
 read = load_config('config/config.txt')
 
 config = {
+    "userDataFile": 'data/user.xls',
+
+    "messageDataFile": 'data/message.xls',
+
+    "deviceIpFile": 'data/device_ip.xls',
     # app包
     "package": "com.whatsapp",
     # 新聊天

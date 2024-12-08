@@ -15,9 +15,7 @@ if os_name == "Windows":
 elif os_name == "Darwin":
     adb_path = os.path.join(project_root, "platform-tools-mac", "adb")
 
-user_path = 'data/user.xlsx'
-message_path = 'data/message.xlsx'
-device_ip_path = 'data/device_ip.xlsx'
+
 def get_usb_device_serial():
     # 执行 adb devices 命令
     result = subprocess.run([adb_path, 'devices'], capture_output=True, text=True)

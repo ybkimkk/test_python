@@ -9,8 +9,8 @@ import util.deviceUtils as deviceUtils
 from util import adbUtils
 from util.adbUtils import adb_path
 
-if not dataUtils.check_device():
-    sys.exit(0)
+# if not dataUtils.check_device():
+#     sys.exit(0)
 
 devices = adbUtils.get_usb_device_serial()
 usb_devices = deviceUtils.check_usb(devices)
