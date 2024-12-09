@@ -12,51 +12,55 @@ def start():
         for device in devices:
             current_ip = device['ip']
             try:
-                print("尝试WIFI链接:" + current_ip)
+                print(f"尝试WIFI链接:{current_ip}")
                 d = u2.connect(current_ip + ':5555')
-                print(current_ip + "链接成功")
+                print(f"{current_ip}链接成功")
                 d.press('home')
                 dataUtils.random_sleep()
+                step = action.Step(d)
                 # 启动 app
                 work_space = d(className='android.widget.RelativeLayout')
                 for app in work_space:
                     if 'WA' in app.info['contentDescription'] or 'WhatsApp' in app.info['contentDescription']:
                         # 清理后台应用
-                        action.clear_system_app(d)
+                        step.clear_system_app()
                         # 初始化 IP
-                        action.restart_network(d)
+                        step.restart_network()
                         app.click()
                         user_list = dataUtils.get_user_list()
                         for i in range(user_list.nrows - 1):
                             user = user_list.row(i + 1)[0].value
                             try:
-                                action.click_new_chat(d)
+                                step.click_new_chat()
 
-                                action.click_search_icon(d)
+                                step.click_search_icon()
                                 # 清空搜索输入框
-                                action.clear_search_input(d)
+                                step.clear_search_input()
                                 # 粘贴
-                                action.past_search_input(d, user)
+                                step.past_search_input(user)
                                 # 点击用户
-                                action.click_user(d, user)
+                                step.click_user(user)
                                 message_list = dataUtils.get_message()
-                                action.simulate_typo_voice(d)
+                                step.simulate_typo_voice()
                                 for message in message_list:
                                     if message == 'gif':
                                         # 点击emoji icon
-                                        action.click_emoji_icon(d)
+                                        step.click_emoji_icon()
                                         # 点击emoji
-                                        action.click_emoji(d)
+                                        step.click_emoji()
                                     else:
                                         # 输入信息
-                                        action.past_message_input(d, dataUtils.simulate_typo(message))
+                                        step.past_message_input(dataUtils.simulate_typo(message))
                                         # 发送
-                                        action.send_message(d)
+                                        step.send_message()
                                 # 返回
-                                action.back_to_list(d)
+                                step.back_to_list()
                             except Exception as e:
-                                print(f"第{i + 1}条数据,用户名:[{user}],异常跳过")
-                                print(e)
+                                d.press('back')
+                                time.sleep(2)
+                                d.press('back')
+                                time.sleep(2)
+                                d.press('back')
             except Exception as e:
                 print(' 连接失败请重新激活')
                 print(e)

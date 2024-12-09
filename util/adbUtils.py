@@ -11,9 +11,9 @@ if getattr(sys, 'frozen', False):
 
 adb_path = ""
 if os_name == "Windows":
-    adb_path = os.path.join(project_root, "platform-tools-windows", "adb.exe")
+    adb_path = os.path.join(project_root, "lib/windows", "adb.exe")
 elif os_name == "Darwin":
-    adb_path = os.path.join(project_root, "platform-tools-mac", "adb")
+    adb_path = os.path.join(project_root, "lib/mac", "adb")
 
 
 def get_usb_device_serial():

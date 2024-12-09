@@ -24,9 +24,9 @@ config = {
     # 搜索图标
     "searchIcon": "com.whatsapp:id/menuitem_search",
     # 搜索输入框
-    "searchInput": "com.whatsapp:id/search_input",
+    "searchInput": "com.whatsapp:id/search_src_text",
     # 搜索用户列表
-    "searchList": "com.whatsapp:id/result_list",
+    "searchList": "com.whatsapp:id/contactpicker_row_name",
     # 消息输入框
     "messageInput": "com.whatsapp:id/entry",
     # 发送按钮
@@ -45,4 +45,6 @@ config = {
     "errVoiceRate": read['err_msg_rate'],
     # 最大停顿时间
     "sleepMax": read['sleep_max'],
+    # debug
+    "debug": read['debug'],
 }

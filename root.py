@@ -1,4 +1,3 @@
-import os
 import time
 
 import uiautomator2 as u2
@@ -7,28 +6,27 @@ import action
 import util.dataUtils as dataUtils
 import util.deviceUtils as deviceUtils
 from util import adbUtils
-from util.adbUtils import adb_path
 
 
 def start():
     while True:
-        print("监控USB中....")
         devices = adbUtils.get_usb_device_serial()
         usb_devices = deviceUtils.check_usb(devices)
         if len(usb_devices) != 0:
+            print(f'检测到设备: {usb_devices}')
             d = u2.connect(usb_devices)
+            step = action.Step(d)
             # 授权
-            action.mobile_root(d)
-            # 检查是否已启动 Wi-Fi 模式
-            netstat_output = d.shell("netstat -an | grep ':5555' | wc -l")
-            netstat_count = int(netstat_output.output.strip())
-
-            if netstat_count == 0:
-                d.shell(adb_path + ' tcpip 5555')
+            step.mobile_root()
             # 获取 ip
             config = d.shell("ifconfig wlan0")
             ip = dataUtils.extract_ip(config.output)
             # 保存 ip
             dataUtils.save_device_ip(ip)
-            print("激活成功请断开数据线")
-        time.sleep(5)
+            print(f"{usb_devices}激活成功,请断开数据线")
+            while True:
+                current_devices = adbUtils.get_usb_device_serial()
+                if usb_devices not in current_devices:
+                    break
+                time.sleep(3)
+        time.sleep(3)

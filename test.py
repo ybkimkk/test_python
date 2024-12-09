@@ -1,4 +1,10 @@
+
+
+import action
+
+
 import uiautomator2 as u2
-
-
-log =  u2.connect()
+d = u2.connect()
+action =  action.Step(d)
+# action.past_search_input('阿彬')
+action.click_user('阿彬')
