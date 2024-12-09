@@ -4,89 +4,47 @@ import random
 import re
 import time
 
+import xlrd
+from diskcache import Cache
+
 import util.configUtils as configUtils
 import util.deviceUtils as deviceUtils
 
-import xlrd
-import xlwt
-import os
-
 config = configUtils.config
 
-
-def save_device_ip(ip):
-    # 打开现有的Excel文件
-    book = xlrd.open_workbook(config['deviceIpFile'])
-    sheet = book.sheet_by_index(0)
-
-    # 创建一个新的工作簿，用来写入更新的数据
-    new_book = xlwt.Workbook()
-    new_sheet = new_book.add_sheet('Sheet1')
-
-    updated = False
-    for row_idx in range(sheet.nrows):
-        row = sheet.row_values(row_idx)
-
-        if row[0] == ip:
-            # 如果IP地址匹配，更新第二列的值为'0'
-            for col_idx in range(sheet.ncols):
-                if col_idx == 1:
-                    new_sheet.write(row_idx, col_idx, 0)  # 更新第二列为 '0'
-                else:
-                    new_sheet.write(row_idx, col_idx, row[col_idx])  # 其他列保持不变
-            updated = True
-        else:
-            # 如果IP地址不匹配，直接复制原始数据
-            for col_idx in range(sheet.ncols):
-                new_sheet.write(row_idx, col_idx, row[col_idx])
-
-    # 如果没有更新任何行，说明没有找到该IP地址，需要追加新行
-    if not updated:
-        # 获取最后一行的位置
-        new_row_idx = sheet.nrows
-        # 插入新数据 (IP 地址为第一列，第二列为 '0')
-        new_sheet.write(new_row_idx, 0, ip)
-        new_sheet.write(new_row_idx, 1, '0')
-        print(f"IP {ip} not found, added as a new entry.")
-
-    # 保存更新后的Excel文件
-    new_book.save(config['deviceIpFile'])
-
-    if updated:
-        print(f"IP {ip} updated with value '0' in second column.")
+cache = Cache('temp/data')
 
 
-def get_device_ips():
-    ip = xlrd.open_workbook(config['deviceIpFile'])
-    ip_sheets = ip.sheets()[0]
-    ip_list = []
-    for row_idx in range(ip_sheets.nrows - 1, -1, -1):
-        ip_list.append(ip_sheets.cell_value(row_idx, 0))
-    return ip_list
+def get_device_ips(status=0):
+    # 获取缓存中的设备列表
+    devices = cache.get("devices", [])
+    list = []
+    for device in devices:
+        if device["status"] == status:
+            list.append(device)
+    return list
 
 
-def clear_ip():
-    # 检查文件是否存在
-    if not os.path.exists(config['deviceIpFile']):
-        print("文件不存在！")
-        return
+def save_device_ip(ip, status=0):
+    # 获取缓存中的设备列表，如果不存在则初始化为空列表
+    devices = cache.get("devices", [])
 
-    # 读取现有的 .xls 文件
-    rb = xlrd.open_workbook(config['deviceIpFile'])
-    ws = rb.sheets()[0]  # 获取第一个工作表
+    # 查找设备是否已经存在
+    for device in devices:
+        if device["ip"] == ip:
+            device["status"] = status  # 更新状态，如果已经存在
+            break
+    else:
+        # 如果设备不存在，添加新的设备记录
+        devices.append({"ip": ip, "status": status})
 
-    # 创建新的工作簿
-    wb = xlwt.Workbook()
-    ws_new = wb.add_sheet('Sheet1')
+    # 保存更新后的设备列表
+    cache["devices"] = devices
 
-    # 清空数据
-    rows = ws.nrows
-    for row_idx in range(rows):
-        for col_idx in range(ws.ncols):
-            ws_new.write(row_idx, col_idx, '')  # 清空单元格内容
 
-    # 保存文件
-    wb.save(config['deviceIpFile'])
+def clear_device():
+    if 'devices' in cache:
+        del cache['devices']
 
 
 def extract_ip(output):

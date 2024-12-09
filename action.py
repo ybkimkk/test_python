@@ -8,7 +8,6 @@ import util.adbUtils as adbUtils
 
 config = configUtils.config
 
-
 def mobile_root(d):
     d.shell(adbUtils.adb_path + ' root')
     d.shell(adbUtils.adb_path + ' shell pm grant com.android.shell android.permission.INJECT_EVENTS')

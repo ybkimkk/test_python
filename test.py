@@ -1,4 +1,4 @@
-import util.dataUtils as dataUtils
+import uiautomator2 as u2
 
-print(111111111111111111)
-print(dataUtils.get_device_ips())
+
+log =  u2.connect()

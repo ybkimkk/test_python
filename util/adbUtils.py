@@ -26,10 +26,8 @@ def get_usb_device_serial():
     # 解析设备序列号
     devices = []
     for line in output.splitlines():
-        # 忽略第一行（设备列表的标题行）
         if line.startswith('List'):
             continue
-        # 只获取 USB 设备（去掉 IP 设备）
         if not line.strip().endswith('device'):
             continue
 
@@ -38,5 +36,4 @@ def get_usb_device_serial():
             serial_number = device_info[0]
             devices.append(serial_number)
 
-    # 返回 USB 连接的设备序列号列表
     return devices
